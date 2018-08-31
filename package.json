@@ -1,0 +1,35 @@
+{
+    "name": "@fibjs/enforce",
+    "version": "0.0.1",
+    "description": "",
+    "main": "lib/index.js",
+    "types": "@types/index.d.ts",
+    "repository": "git://github.com/richardo2016/fibjs-enforce.git",
+    "author": "richardo2016@gmail.com",
+    "homepage": "https://github.com/richardo2016/fibjs-enforce",
+    "license": "MIT",
+    "keywords": [
+        "enforce"
+    ],
+    "scripts": {
+        "build": "fib-typify src -o lib -c .typify.json",
+        "ci": "fibjs test/run.js"
+    },
+    "devDependencies": {
+        "@fibjs/ci": "^2.1.0",
+        "@types/fibjs": "^0.26.0",
+        "fib-typify": "^0.3.0"
+    },
+    "ci": {
+        "type": "travis",
+        "version": [
+            "0.21.0",
+            "0.22.0",
+            "0.23.0",
+            "0.24.0",
+            "0.25.0",
+            "0.26.0",
+            "0.26.1"
+        ]
+    }
+}
