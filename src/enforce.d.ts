@@ -1,6 +1,6 @@
 ﻿declare var exports: any
 
-declare module enforce {
+declare module "@fibjs/enforce" {
     export interface IEnforce {
         add(property: string, validator: ValidationCallback): IEnforce;
         add(property: string, validator: IValidator): IEnforce;
