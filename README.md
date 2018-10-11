@@ -13,7 +13,7 @@ You can create a list of validations for several properties of an `Object` and t
 see if everything is OK.
 
 ```js
-var enforce = require("enforce");
+var enforce = require("@fibjs/enforce");
 var checks  = new enforce.Enforce();
 
 checks
@@ -33,7 +33,7 @@ be all checked before returning errors. With this option, if any error is found,
 returned in an `Array`.
 
 ```js
-var enforce = require("enforce");
+var enforce = require("@fibjs/enforce");
 var checks  = new enforce.Enforce({
 	returnAllErrors : true
 });

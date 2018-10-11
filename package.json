@@ -13,7 +13,9 @@
     ],
     "scripts": {
         "build": "fib-typify src -o lib -c .typify.json",
-        "ci": "fibjs test/run.js"
+        "test": "fibjs test/run.js",
+        "ci": "npm run build && npm run test",
+        "prepublishOnly": "npm run build"
     },
     "devDependencies": {
         "@fibjs/ci": "^2.1.0",
