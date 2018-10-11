@@ -1,4 +1,6 @@
-﻿import enforce = require('@fibjs/enforce')
+﻿/// <reference path="../../@types/index.d.ts" />
+
+import enforce = require('@fibjs/enforce')
 import Validator = require('../validator');
 import Ranges = require('./ranges');
 

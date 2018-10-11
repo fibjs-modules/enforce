@@ -1,9 +1,9 @@
-﻿/// <reference path="enforce.d.ts" />
-/// <reference path="validator.ts" />
+﻿/// <reference path="../@types/index.d.ts" />
 
+import enforce = require('@fibjs/enforce')
 import Validator = require('./validator');
 
-class Enforce {
+class Enforce implements enforce.IEnforce {
     private validations: enforce.ValidatorMap = {};
     private contexts: enforce.ContextMap = {};
     private options: enforce.Options;
@@ -12,12 +12,10 @@ class Enforce {
         this.options = {
             returnAllErrors: options && !!options.returnAllErrors
         }
-
-        return this;
     }
     add(property: string, validator: enforce.ValidationCallback): Enforce
     add(property: string, validator: enforce.IValidator): Enforce
-    add(property: string, validator: any): Enforce {
+    add(property: string, validator: any): enforce.IEnforce {
         if (typeof validator === 'function' && validator.length >= 2) {
             validator = new Validator(validator);
         }
@@ -30,7 +28,7 @@ class Enforce {
             this.validations[property] = [];
 
         this.validations[property].push(validator);
-        return this;
+        return this as any;
     }
 
     context(): enforce.ContextMap;

@@ -1,7 +1,11 @@
 declare var exports: any
 
 declare module "@fibjs/enforce" {
-    module enforce {
+    namespace enforce {
+        interface enforcementsContainer {
+            [key: string]: IValidator
+        }
+
         export interface IEnforce {
             add(property: string, validator: ValidationCallback): IEnforce;
             add(property: string, validator: IValidator): IEnforce;
@@ -13,28 +17,24 @@ declare module "@fibjs/enforce" {
             check(data: any, cb: (errors: Error[]) => void);
         }
 
-        export interface EnforceStatic {
-            Enforce(options?: Options): IEnforce;
-        }
-
         export interface Options {
             returnAllErrors: boolean;
         }
 
-        interface ContextMap {
+        export interface ContextMap {
             property?: string;
             [name: string]: any;
         }
 
-        interface IValidator {
+        export interface IValidator {
             validate(data: any, next: (message?: string) => void, thisArg?: any, contexts?: ContextMap)
         }
 
-        interface ValidationCallback {
+        export interface ValidationCallback {
             (value: any, next: (errorMessage?: string) => boolean, contexts: ContextMap);
         }
 
-        interface ValidatorMap {
+        export interface ValidatorMap {
             [property: string]: IValidator[];
         }
 
@@ -44,6 +44,20 @@ declare module "@fibjs/enforce" {
             msg?: string;
             type?: string;
         }
+
+        export const Enforce: { new (options?: Options): IEnforce; }
+        export const Validator: { new (options?: Options): IValidator; }
+
+        export const lists: enforcementsContainer;
+        export const ranges: enforcementsContainer;
+        export const security: enforcementsContainer;
+        export const patterns: enforcementsContainer;
+
+        /* common :start */
+        export const required: IValidator;
+        export const notEmptyString: IValidator;
+        export const sameAs: IValidator;
+        /* common :end */
     }
 
     export = enforce

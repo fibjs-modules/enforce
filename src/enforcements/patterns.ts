@@ -1,6 +1,6 @@
-﻿/// <reference path="../enforce.d.ts" />
-/// <reference path="../validator.ts" />
+﻿/// <reference path="../../@types/index.d.ts" />
 
+import enforce = require('@fibjs/enforce')
 import Validator = require('../validator');
 
 /**
