@@ -1,7 +1,13 @@
 
-v0.0.2 / 2018-10-11
+v0.0.3 / 2018-10-12
 ==================
 
+  * typo fix.
+
+v0.0.2 / 2018-10-11
+===================
+
+  * Release v0.0.2
   * normalize typo definitions.
   * add lib/* 2 .gitignore
   * fix: fix module name in declaration file.
