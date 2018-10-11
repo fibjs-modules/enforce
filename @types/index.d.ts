@@ -1,5 +1,3 @@
-declare var exports: any
-
 declare namespace enforce {
     interface enforcementValidation {
         (...args: any[]): enforce.IValidator
@@ -61,4 +59,8 @@ declare namespace enforce {
     export const notEmptyString: enforcementValidation;
     export const sameAs: enforcementValidation;
     /* common :end */
+}
+
+declare module "@fibjs/enforce" {
+    export = enforce
 }
