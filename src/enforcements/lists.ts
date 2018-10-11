@@ -1,6 +1,4 @@
-﻿/// <reference path="../enforce.d.ts" />
-/// <reference path="../validator.ts" />
-
+﻿import enforce = require('@fibjs/enforce')
 import Validator = require('../validator');
 
 export function inside(list: string[], message?: string): enforce.IValidator;

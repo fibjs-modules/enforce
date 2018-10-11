@@ -1,4 +1,4 @@
-﻿/// <reference path="enforce.d.ts" />
+﻿import enforce = require('@fibjs/enforce')
 
 class Validator implements enforce.IValidator {
     private validator: enforce.ValidationCallback;

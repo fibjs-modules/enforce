@@ -1,4 +1,4 @@
-﻿/// <reference path="enforce.d.ts" />
+﻿/// <reference path="../@types/index.d.ts" />
 
 import common = require('./enforcements/common');
 export import Enforce = require('./enforce');
