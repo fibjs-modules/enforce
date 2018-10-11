@@ -1,7 +1,4 @@
-﻿/// <reference path="../../@types/index.d.ts" />
-
-import enforce = require('@fibjs/enforce')
-import Validator = require('../validator');
+﻿import Validator = require('../validator');
 
 export function number(min: number, max: number, message: string = 'out-of-range-number'): enforce.IValidator {
     return new Validator((value: number, next) => {

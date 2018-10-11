@@ -1,7 +1,4 @@
-﻿/// <reference path="../../@types/index.d.ts" />
-
-import enforce = require('@fibjs/enforce')
-import patterns = require('./patterns');
+﻿import patterns = require('./patterns');
 import Validator = require('../validator');
 
 export interface SecurityUsernameOptions {
