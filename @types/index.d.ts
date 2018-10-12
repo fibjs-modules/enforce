@@ -29,6 +29,11 @@ declare namespace enforce {
 
     export interface IValidator {
         validate(data: any, next: (message?: string) => void, thisArg?: any, contexts?: ContextMap)
+
+        ifDefined(): enforce.IValidator
+        ifNotEmptyString(): enforce.IValidator
+        ifType(type: string): enforce.IValidator
+        ifNotType(type: string): enforce.IValidator
     }
 
     export interface ValidationCallback {

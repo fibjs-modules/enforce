@@ -1,4 +1,6 @@
-﻿class Validator implements enforce.IValidator {
+﻿/// <reference path="../@types/index.d.ts" />
+
+class Validator implements enforce.IValidator {
     private validator: enforce.ValidationCallback;
 
     constructor(validate: enforce.ValidationCallback) {
