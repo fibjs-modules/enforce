@@ -28,7 +28,7 @@ declare namespace enforce {
     }
 
     export interface IValidator {
-        validate(data: any, next: (message?: string) => void, thisArg?: any, contexts?: ContextMap)
+        validate: ValidationCallback
 
         ifDefined(): enforce.IValidator
         ifNotEmptyString(): enforce.IValidator
@@ -52,7 +52,7 @@ declare namespace enforce {
     }
 
     export const Enforce: { new (options?: Options): IEnforce; }
-    export const Validator: { new (options?: Options): IValidator; }
+    export const Validator: { new (callback: ValidationCallback): IValidator; }
 
     export const lists: enforcementsContainer;
     export const ranges: enforcementsContainer;
