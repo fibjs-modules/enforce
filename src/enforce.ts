@@ -2,25 +2,25 @@
 
 import Validator = require('./validator');
 
-class Enforce implements enforce.IEnforce {
-    private validations: enforce.ValidatorMap = {};
-    private contexts: enforce.ContextMap = {};
-    private options: enforce.Options;
+class Enforce implements FibjsEnforce.IEnforce {
+    private validations: FibjsEnforce.ValidatorMap = {};
+    private contexts: FibjsEnforce.ContextMap = {};
+    private options: FibjsEnforce.Options;
 
-    constructor(options?: enforce.Options) {
+    constructor(options?: FibjsEnforce.Options) {
         this.options = {
             returnAllErrors: options && !!options.returnAllErrors
         }
     }
-    add(property: string, validator: enforce.ValidationCallback): Enforce
-    add(property: string, validator: enforce.IValidator): Enforce
-    add(property: string, validator: any): enforce.IEnforce {
+    add(property: string, validator: FibjsEnforce.ValidationCallback): Enforce
+    add(property: string, validator: FibjsEnforce.IValidator): Enforce
+    add(property: string, validator: any): FibjsEnforce.IEnforce {
         if (typeof validator === 'function' && validator.length >= 2) {
             validator = new Validator(validator);
         }
 
         if (validator.validate === undefined) {
-            throw new Error('Missing validator (function) in Enforce.add(property, validator)');
+            throw new Error('Missing validator (function) in FibjsEnforce.add(property, validator)');
         }
 
         if (!this.validations.hasOwnProperty(property))
@@ -30,7 +30,7 @@ class Enforce implements enforce.IEnforce {
         return this as any;
     }
 
-    context(): enforce.ContextMap;
+    context(): FibjsEnforce.ContextMap;
     context(name: string): any;
     context(name: string, value: any): Enforce;
     context(name?: string, value?: any) {
@@ -48,12 +48,12 @@ class Enforce implements enforce.IEnforce {
         this.validations = {};
     }
 
-    check(data: any, cb: (error: Error) => void);
-    check(data: any, cb: (errors: Error[]) => void);
-    check(data: any, cb: (errors: any) => void) {
+    check(data: any, cb: (error: Error) => void): any;
+    check(data: any, cb: (errors: Error[]) => void): any;
+    check(data: any, cb: (errors: any) => void): any {
         var validations: {
             property: string;
-            validator: enforce.IValidator;
+            validator: FibjsEnforce.IValidator;
         }[] = [];
 
         var errors: Error[] = [];
@@ -66,10 +66,11 @@ class Enforce implements enforce.IEnforce {
             var validation = validations.shift();
             this.contexts.property = validation.property;
 
-            validation.validator.validate(data[validation.property],
+            validation.validator.validate(
+                data[validation.property],
                 function (message?: string) {
                     if (message) {
-                        var err: enforce.ValidationError = new Error(message);
+                        var err: FibjsEnforce.ValidationError = new Error(message);
                         err.property = validation.property;
                         err.value = data[validation.property];
                         err.msg = message;

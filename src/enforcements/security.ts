@@ -17,9 +17,9 @@ var creditcard_prefixes: {
         discover2: ["65"]
     };
 
-export function username(message?: string): enforce.IValidator;
-export function username(options: SecurityUsernameOptions, message?: string): enforce.IValidator;
-export function username(options: SecurityUsernameOptions = { length: 2, expr: null }, message: string = 'invalid-username'): enforce.IValidator {
+export function username(message?: string): FibjsEnforce.IValidator;
+export function username(options: SecurityUsernameOptions, message?: string): FibjsEnforce.IValidator;
+export function username(options: SecurityUsernameOptions = { length: 2, expr: null }, message: string = 'invalid-username'): FibjsEnforce.IValidator {
     if (typeof options === 'string') {
         message = (options as any).toString();
         options = { length: 2, expr: null };
@@ -32,9 +32,9 @@ export function username(options: SecurityUsernameOptions = { length: 2, expr: n
     return patterns.match(options.expr, message);
 }
 
-export function password(message?: string): enforce.IValidator;
-export function password(checks: string, message?: string): enforce.IValidator;
-export function password(checks?: string, message?: string): enforce.IValidator {
+export function password(message?: string): FibjsEnforce.IValidator;
+export function password(checks: string, message?: string): FibjsEnforce.IValidator;
+export function password(checks?: string, message?: string): FibjsEnforce.IValidator {
     if (!message) {
         message = checks;
         checks = "luns6";
@@ -60,7 +60,7 @@ export function password(checks?: string, message?: string): enforce.IValidator 
     });
 }
 
-export function creditcard(types: string[]= ["amex", "visa", "maestro", "discover", "mastercard"], message: string = 'not-valid-creditcard'): enforce.IValidator {
+export function creditcard(types: string[]= ["amex", "visa", "maestro", "discover", "mastercard"], message: string = 'not-valid-creditcard'): FibjsEnforce.IValidator {
     return new Validator((v, next) => {
         if (!v) return next(message);
 
@@ -126,7 +126,7 @@ export function creditcard(types: string[]= ["amex", "visa", "maestro", "discove
             return next(message);
         }
 
-        var digits = v.slice(0, v.length - 1).split('');
+        var digits: number[] = v.slice(0, v.length - 1).split('');
         digits.reverse();
 
         for (var i = 0; i < digits.length; i++) {

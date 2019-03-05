@@ -12,15 +12,15 @@
         "enforce"
     ],
     "scripts": {
-        "build": "fib-typify src -o lib -c .typify.json",
+        "build": "fib-typify src -o lib",
         "test": "fibjs test/run.js",
         "ci": "npm run build && npm run test",
         "prepublishOnly": "npm run build"
     },
     "devDependencies": {
         "@fibjs/ci": "^2.1.0",
-        "@types/fibjs": "^0.26.0",
-        "fib-typify": "^0.3.0"
+        "@types/fibjs": "^0.26.5",
+        "fib-typify": "^0.5.2"
     },
     "ci": {
         "type": "travis",

@@ -8,9 +8,9 @@ import Validator = require('../validator');
  * modifiers or just send the RegExp object
  * as 1st argument.
  **/
-export function match(pattern: RegExp, message?: string): enforce.IValidator;
-export function match(pattern: string, modifiers?: string, message?: string): enforce.IValidator;
-export function match(pattern: any, modifiers: string = 'i', message: string = 'no-pattern-match'): enforce.IValidator {
+export function match(pattern: RegExp, message?: string): FibjsEnforce.IValidator;
+export function match(pattern: string, modifiers?: string, message?: string): FibjsEnforce.IValidator;
+export function match(pattern: any, modifiers: string = 'i', message: string = 'no-pattern-match'): FibjsEnforce.IValidator {
     if (arguments.length == 2) {
         message = modifiers;
         modifiers = 'i';
@@ -30,7 +30,7 @@ export function match(pattern: any, modifiers: string = 'i', message: string = '
  * Check if a value is an hexadecimal string
  * (letters from A to F and numbers).
  **/
-export function hexString(message: string = 'not-hex-string'): enforce.IValidator {
+export function hexString(message: string = 'not-hex-string'): FibjsEnforce.IValidator {
     return match("^[a-f0-9]+$", "i", message);
 }
 
@@ -45,7 +45,7 @@ export function email(message: string = 'not-valid-email') {
 /**
  * Check if it's a valid IPv4 address.
  **/
-export function ipv4(message: string = 'not-valid-ipv4'): enforce.IValidator {
+export function ipv4(message: string = 'not-valid-ipv4'): FibjsEnforce.IValidator {
     var p1 = "([1-9]|1[0-9][0-9]?|2[0-4][0-9]|25[0-4])";
     var p2 = "([0-9]|1[0-9][0-9]?|2[0-4][0-9]|25[0-4])";
     return match("^" + [p1, p2, p2, p1].join("\\.") + "$", "", message);
@@ -54,7 +54,7 @@ export function ipv4(message: string = 'not-valid-ipv4'): enforce.IValidator {
 /**
  * Check if it's a valid IPv6 address.
  **/
-export function ipv6(message: string = 'not-valid-ipv6'): enforce.IValidator {
+export function ipv6(message: string = 'not-valid-ipv6'): FibjsEnforce.IValidator {
     var p1 = new RegExp("^([a-f0-9]{1,4}:){7}[a-f0-9]{1,4}$", "i");
     var p2 = new RegExp("^([a-f0-9]{1,4}:)*[a-f0-9]{1,4}$", "i");
 
@@ -89,7 +89,7 @@ export function ipv6(message: string = 'not-valid-ipv6'): enforce.IValidator {
 /**
  * Check if it's a valid MAC address.
  **/
-export function mac(message: string = 'not-valid-mac'): enforce.IValidator {
+export function mac(message: string = 'not-valid-mac'): FibjsEnforce.IValidator {
     var p = "[0-9a-f]{1,2}";
     var s = "[\\.:]";
     return match("^" + [p, p, p, p, p, p].join(s) + "$", "i", message);
@@ -99,7 +99,7 @@ export function mac(message: string = 'not-valid-mac'): enforce.IValidator {
  * Check if it's a valid UUID version 3 (MD5 hash).
  * http://en.wikipedia.org/wiki/Universally_unique_identifier#Version_3_.28MD5_hash.29
  **/
-export function uuid3(message: string = 'not-valid-uuid3'): enforce.IValidator {
+export function uuid3(message: string = 'not-valid-uuid3'): FibjsEnforce.IValidator {
     return match("^[a-f0-9]{8}\-[a-f0-9]{4}\-3[a-f0-9]{3}\-[89ab][a-f0-9]{3}\-[a-f0-9]{12}$", "i", message);
 }
 
@@ -107,6 +107,6 @@ export function uuid3(message: string = 'not-valid-uuid3'): enforce.IValidator {
  * Check if it's a valid UUID version 4 (random).
  * http://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29
  **/
-export function uuid4(message: string = 'not-valid-uuid4'): enforce.IValidator {
+export function uuid4(message: string = 'not-valid-uuid4'): FibjsEnforce.IValidator {
     return match("^[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-[89ab][a-f0-9]{3}\-[a-f0-9]{12}$", "i", message);
 }

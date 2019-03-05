@@ -1,6 +1,6 @@
-declare namespace enforce {
+declare namespace FibjsEnforce {
     interface enforcementValidation {
-        (...args: any[]): enforce.IValidator
+        (...args: any[]): FibjsEnforce.IValidator
     }
 
     interface enforcementsContainer {
@@ -13,9 +13,8 @@ declare namespace enforce {
         context(): any;
         context(name: string): any;
         context(name: string, value: any): IEnforce;
-        clear();
-        check(data: any, cb: (error: Error) => void);
-        check(data: any, cb: (errors: Error[]) => void);
+        clear(): void;
+        check(data: any, cb: (error: Error | Error[]) => void): any;
     }
 
     export interface Options {
@@ -30,14 +29,14 @@ declare namespace enforce {
     export interface IValidator {
         validate: ValidationCallback
 
-        ifDefined(): enforce.IValidator
-        ifNotEmptyString(): enforce.IValidator
-        ifType(type: string): enforce.IValidator
-        ifNotType(type: string): enforce.IValidator
+        ifDefined(): FibjsEnforce.IValidator
+        ifNotEmptyString(): FibjsEnforce.IValidator
+        ifType(type: string): FibjsEnforce.IValidator
+        ifNotType(type: string): FibjsEnforce.IValidator
     }
 
     export interface ValidationCallback {
-        (value: any, next: (errorMessage?: string) => boolean, contexts: ContextMap);
+        (value: any, next: (errorMessage?: string) => boolean, thisArg?: any, contexts?: ContextMap): void;
     }
 
     export interface ValidatorMap {
@@ -51,21 +50,24 @@ declare namespace enforce {
         type?: string;
     }
 
-    export const Enforce: { new (options?: Options): IEnforce; }
-    export const Validator: { new (callback: ValidationCallback): IValidator; }
+    interface ExportModule {
+        Enforce: { new (options?: Options): IEnforce; }
+        Validator: { new (callback: ValidationCallback): IValidator; }
 
-    export const lists: enforcementsContainer;
-    export const ranges: enforcementsContainer;
-    export const security: enforcementsContainer;
-    export const patterns: enforcementsContainer;
+        lists: enforcementsContainer;
+        ranges: enforcementsContainer;
+        security: enforcementsContainer;
+        patterns: enforcementsContainer;
 
-    /* common :start */
-    export const required: enforcementValidation;
-    export const notEmptyString: enforcementValidation;
-    export const sameAs: enforcementValidation;
-    /* common :end */
+        /* common :start */
+        required: enforcementValidation;
+        notEmptyString: enforcementValidation;
+        sameAs: enforcementValidation;
+        /* common :end */
+    }
 }
 
 declare module "@fibjs/enforce" {
-    export = enforce
+    const mod: FibjsEnforce.ExportModule
+    export = mod
 }
