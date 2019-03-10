@@ -4,7 +4,8 @@ this library is almost copied from [node-enforce](https://github.com/dresende/no
 
 ## Data Validations
 
-[![Build Status](https://secure.travis-ci.org/richardo2016/fibjs-enforce.png?branch=master)](http://travis-ci.org/richardo2016/fibjs-enforce)
+[![Build Status](https://secure.travis-ci.org/fibjs-modules/enforce.png?branch=master)](https://travis-ci.org/fibjs-modules/enforce)
+[![Build status](https://ci.appveyor.com/api/projects/status/38egey3758071m4k?svg=true)](https://ci.appveyor.com/project/richardo2016/enforce)
 [![NPM version](https://img.shields.io/npm/v/@fibjs/enforce.svg)](https://www.npmjs.org/package/@fibjs/enforce)
 
 ## Enforce
