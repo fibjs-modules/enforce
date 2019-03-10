@@ -4,9 +4,9 @@
     "description": "",
     "main": "lib/index.js",
     "types": "@types/index.d.ts",
-    "repository": "git://github.com/richardo2016/fibjs-enforce.git",
+    "repository": "git://github.com/fibjs-modules/enforce.git",
     "author": "richardo2016@gmail.com",
-    "homepage": "https://github.com/richardo2016/fibjs-enforce",
+    "homepage": "https://github.com/fibjs-modules/enforce",
     "license": "MIT",
     "keywords": [
         "enforce"
