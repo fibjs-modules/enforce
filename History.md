@@ -1,7 +1,16 @@
 
-v0.0.8 / 2019-03-06
+v0.1.0 / 2019-07-06
 ==================
 
+  * add IEnforce.checkSync and finish it.
+  * robust change.
+  * update repo info.
+  * update ci settings.
+
+v0.0.8 / 2019-03-06
+===================
+
+  * Release v0.0.8
   * upgrade dependencies, typo fix.
 
 v0.0.7 / 2018-11-11
