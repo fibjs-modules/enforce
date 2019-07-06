@@ -3,18 +3,16 @@
 import Validator = require('./validator');
 
 class Enforce implements FibjsEnforce.IEnforce {
-    private validations: FibjsEnforce.ValidatorMap = {};
+    private validations: FibjsEnforce.ValidatorDict = {};
     private contexts: FibjsEnforce.ContextMap = {};
-    private options: FibjsEnforce.Options;
 
-    constructor(options?: FibjsEnforce.Options) {
+    constructor(private options?: FibjsEnforce.Options) {
         this.options = {
             returnAllErrors: options && !!options.returnAllErrors
         }
     }
-    add(property: string, validator: FibjsEnforce.ValidationCallback): Enforce
-    add(property: string, validator: FibjsEnforce.IValidator): Enforce
-    add(property: string, validator: any): FibjsEnforce.IEnforce {
+
+    add(property: string, validator: any) {
         if (typeof validator === 'function' && validator.length >= 2) {
             validator = new Validator(validator);
         }
@@ -27,7 +25,7 @@ class Enforce implements FibjsEnforce.IEnforce {
             this.validations[property] = [];
 
         this.validations[property].push(validator);
-        return this as any;
+        return this;
     }
 
     context(): FibjsEnforce.ContextMap;
@@ -48,8 +46,6 @@ class Enforce implements FibjsEnforce.IEnforce {
         this.validations = {};
     }
 
-    check(data: any, cb: (error: Error) => void): any;
-    check(data: any, cb: (errors: Error[]) => void): any;
     check(data: any, cb: (errors: any) => void): any {
         var validations: {
             property: string;
@@ -68,7 +64,7 @@ class Enforce implements FibjsEnforce.IEnforce {
 
             validation.validator.validate(
                 data[validation.property],
-                function (message?: string) {
+                (message?: string) => {
                     if (message) {
                         var err: FibjsEnforce.ValidationError = new Error(message);
                         err.property = validation.property;
@@ -81,7 +77,7 @@ class Enforce implements FibjsEnforce.IEnforce {
                     }
 
                     return next();
-                }.bind(this),
+                },
                 data,
                 this.contexts
             );

@@ -7,9 +7,9 @@ declare namespace FibjsEnforce {
         [key: string]: enforcementValidation
     }
 
-    export interface IEnforce {
-        add(property: string, validator: ValidationCallback): IEnforce;
-        add(property: string, validator: IValidator): IEnforce;
+    interface IEnforce {
+        add(property: string, validator: ValidationCallback): this;
+        add(property: string, validator: IValidator): this;
         context(): any;
         context(name: string): any;
         context(name: string, value: any): IEnforce;
@@ -17,16 +17,16 @@ declare namespace FibjsEnforce {
         check(data: any, cb: (error: Error | Error[]) => void): any;
     }
 
-    export interface Options {
+    interface Options {
         returnAllErrors: boolean;
     }
 
-    export interface ContextMap {
+    interface ContextMap {
         property?: string;
         [name: string]: any;
     }
 
-    export interface IValidator {
+    interface IValidator {
         validate: ValidationCallback
 
         ifDefined(): FibjsEnforce.IValidator
@@ -35,15 +35,15 @@ declare namespace FibjsEnforce {
         ifNotType(type: string): FibjsEnforce.IValidator
     }
 
-    export interface ValidationCallback {
-        (value: any, next: (errorMessage?: string) => boolean, thisArg?: any, contexts?: ContextMap): void;
+    interface ValidationCallback {
+        (value: any, next: (errorMessage?: string) => any, thisArg?: any, contexts?: ContextMap): void;
     }
 
-    export interface ValidatorMap {
+    interface ValidatorDict {
         [property: string]: IValidator[];
     }
 
-    export interface ValidationError extends Error {
+    interface ValidationError extends Error {
         property?: string;
         value?: any;
         msg?: string;
