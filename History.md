@@ -1,7 +1,13 @@
 
-v0.1.0 / 2019-07-06
+v0.1.1 / 2019-07-06
 ==================
 
+  * fix: [enforce] keep same validators iteration logic with previous minor version.
+
+v0.1.0 / 2019-07-06
+===================
+
+  * Release v0.1.0
   * add IEnforce.checkSync and finish it.
   * robust change.
   * update repo info.
