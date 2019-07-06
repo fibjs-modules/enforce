@@ -12,9 +12,10 @@ declare namespace FibjsEnforce {
         add(property: string, validator: IValidator): this;
         context(): any;
         context(name: string): any;
-        context(name: string, value: any): IEnforce;
+        context(name: string, value: any): this;
         clear(): void;
-        check(data: any, cb: (error: Error | Error[]) => void): any;
+        check(data: any, cb: (error: Error | Error[]) => void): void;
+        checkSync(data: any): Error[]
     }
 
     interface Options {
@@ -27,6 +28,9 @@ declare namespace FibjsEnforce {
     }
 
     interface IValidator {
+        /**
+         * @bad_design
+         */
         validate: ValidationCallback
 
         ifDefined(): FibjsEnforce.IValidator
@@ -39,7 +43,7 @@ declare namespace FibjsEnforce {
         (value: any, next: (errorMessage?: string) => any, thisArg?: any, contexts?: ContextMap): void;
     }
 
-    interface ValidatorDict {
+    interface ValidatorListDict {
         [property: string]: IValidator[];
     }
 

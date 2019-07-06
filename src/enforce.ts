@@ -3,7 +3,7 @@
 import Validator = require('./validator');
 
 class Enforce implements FibjsEnforce.IEnforce {
-    private validations: FibjsEnforce.ValidatorDict = {};
+    private validations: FibjsEnforce.ValidatorListDict = {};
     private contexts: FibjsEnforce.ContextMap = {};
 
     constructor(private options?: FibjsEnforce.Options) {
@@ -18,19 +18,16 @@ class Enforce implements FibjsEnforce.IEnforce {
         }
 
         if (validator.validate === undefined) {
-            throw new Error('Missing validator (function) in FibjsEnforce.add(property, validator)');
+            throw new Error('[FibjsEnforce.add(property, validator)]Missing validate function validator');
         }
 
-        if (!this.validations.hasOwnProperty(property))
+        if (!this.validations.hasOwnProperty(property) || !Array.isArray(this.validations[property]))
             this.validations[property] = [];
 
         this.validations[property].push(validator);
         return this;
     }
 
-    context(): FibjsEnforce.ContextMap;
-    context(name: string): any;
-    context(name: string, value: any): Enforce;
     context(name?: string, value?: any) {
         if (name && value) {
             this.contexts[name] = value;
@@ -46,53 +43,60 @@ class Enforce implements FibjsEnforce.IEnforce {
         this.validations = {};
     }
 
-    check(data: any, cb: (errors: any) => void): any {
-        var validations: {
-            property: string;
-            validator: FibjsEnforce.IValidator;
-        }[] = [];
+    checkSync (data: any): Error[] {
+        const errors = <Error[]>[];
 
-        var errors: Error[] = [];
-        var next = () => {
-            if (validations.length === 0) {
-                if (errors.length > 0) return cb(errors);
-                else return cb(null);
+        if (!Object.keys(this.validations))
+            return errors;
+            
+        const contexts = {...this.contexts}
+        const { returnAllErrors } = this.options;
+
+        let _err: FibjsEnforce.ValidationError = null;
+        for (let property in this.validations) {
+            const validators = this.validations[property]
+
+            for (let i = 0; i < validators.length; i++) {
+                const validator = validators[i];
+
+                validator.validate(
+                    data[property],
+                    (message?: string) => {
+                        if (!message)
+                            return ;
+
+                        _err = new Error(message);
+                        _err.property = property;
+                        _err.value = data[property];
+                        _err.msg = message;
+                        _err.type = "validation";
+                    },
+                    data,
+                    contexts
+                );
+
+                if (!_err)
+                    continue ;
+                
+                errors.push(_err);
+                _err = null;
+                if (!returnAllErrors) break;
             }
 
-            var validation = validations.shift();
-            this.contexts.property = validation.property;
-
-            validation.validator.validate(
-                data[validation.property],
-                (message?: string) => {
-                    if (message) {
-                        var err: FibjsEnforce.ValidationError = new Error(message);
-                        err.property = validation.property;
-                        err.value = data[validation.property];
-                        err.msg = message;
-                        err.type = "validation";
-
-                        if (!this.options.returnAllErrors) return cb(err);
-                        errors.push(err);
-                    }
-
-                    return next();
-                },
-                data,
-                this.contexts
-            );
-        };
-
-        for (var k in this.validations) {
-            for (var i = 0; i < this.validations[k].length; i++) {
-                validations.push({
-                    property: k,
-                    validator: this.validations[k][i]
-                });
-            }
+            if (errors.length && !returnAllErrors)
+                break;
         }
 
-        return next();
+        return errors;
+    }
+
+    check(data: any, cb: (errors: Error[] | Error) => void): void {
+        const errs = this.checkSync(data)
+        if (!errs.length)
+            cb(null)
+        else {
+            cb(this.options.returnAllErrors ? errs : errs[0])
+        }
     }
 }
 

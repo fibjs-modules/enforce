@@ -173,4 +173,69 @@ describe("new enforce.Enforce()", function () {
 			});
 		});
 	});
+
+	describe(".checkSync (default options)", function () {
+		it("should return no error if it's ok", function () {
+			var checks = new enforce.Enforce();
+
+			checks.add("prop", enforce.lists.inside([ 1, 2, 3 ]));
+			checks.add("prop", enforce.lists.inside([ 3, 4, 5 ]));
+
+			const [ err ] = checks.checkSync({
+				prop : 3
+			});
+
+			assert.notExist(err);
+		});
+
+		it("should return after first error", function () {
+			var checks = new enforce.Enforce();
+
+			checks.add("prop", enforce.lists.inside([ 1, 2, 3 ], "first-error"));
+			checks.add("prop", enforce.lists.inside([ 3, 4, 5 ], "last-error"));
+
+			const [ err ] = checks.checkSync({
+				prop : 6
+			});
+
+			assert.exist(err);
+			assert.equal(err.msg, "first-error");
+		});
+	});
+
+	describe(".checkSync (returnAllErrors = true)", function () {
+		it("should return no error if it's ok", function () {
+			var checks = new enforce.Enforce({
+				returnAllErrors : true
+			});
+
+			checks.add("prop", enforce.lists.inside([ 1, 2, 3 ]));
+			checks.add("prop", enforce.lists.inside([ 3, 4, 5 ]));
+
+			const [ err ] = checks.checkSync({
+				prop : 3
+			});
+
+			assert.notExist(err);
+		});
+
+		it("should return after all validations", function () {
+			var checks = new enforce.Enforce({
+				returnAllErrors : true
+			});
+
+			checks.add("prop", enforce.lists.inside([ 1, 2, 3 ], "first-error"));
+			checks.add("prop", enforce.lists.inside([ 3, 4, 5 ], "last-error"));
+
+			const errs = checks.checkSync({
+				prop : 6
+			});
+
+			assert.exist(errs);
+			assert.isArray(errs);
+
+			assert.equal(errs[0].msg, "first-error");
+			assert.equal(errs[1].msg, "last-error");
+		});
+	});
 });
