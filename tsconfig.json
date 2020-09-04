@@ -3,6 +3,14 @@
         "target": "es6",
         "module": "commonjs",
         "noImplicitAny": true,
-        "noImplicitUseStrict": true
+        "noImplicitUseStrict": true,
+        "declaration": true,
+        "declarationDir": "typings",
+        "types": [
+            "@fibjs/types"
+        ],
+        "typeRoots": [
+            "typings/index.d.ts"
+        ]
     }
 }

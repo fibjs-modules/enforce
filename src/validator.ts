@@ -1,26 +1,35 @@
-﻿/// <reference path="../@types/index.d.ts" />
+﻿import { IValidator } from "./enforcements/common";
 
-class Validator implements FibjsEnforce.IValidator {
-    private validator: FibjsEnforce.ValidationCallback;
+export interface IValidateContext {
+    property?: string;
+    [name: string]: any;
+}
 
-    constructor(validate: FibjsEnforce.ValidationCallback) {
+export interface ValidationCallback {
+    (value: any, next: (errorMessage?: string) => any, thisArg?: any, contexts?: IValidateContext): void;
+}
+
+export default class Validator implements IValidator {
+    private validator: ValidationCallback;
+
+    constructor(validate: ValidationCallback) {
         this.validator = validate;
         return this;
     }
     
-    public validate(data: any, next: (message?: string) => void, thisArg?: any, contexts?: FibjsEnforce.ContextMap) {
+    public validate(data: any, next: (message?: string) => void, thisArg?: any, contexts?: IValidateContext) {
         contexts = contexts || {};
         this.validator.apply(thisArg, [data, next, contexts]);
     }
 
-    ifDefined(): FibjsEnforce.IValidator {
+    ifDefined(): IValidator {
         return new Validator((value, next, contexts) => {
             if (value === undefined || value === null) return next();
             return this.validator(value, next, contexts);
         });
     }
     
-    ifNotEmptyString(): FibjsEnforce.IValidator {
+    ifNotEmptyString(): IValidator {
         return new Validator((value, next, contexts) => {
             if (value === undefined || value === null) return next();
             if (typeof value !== 'string') return next();
@@ -29,19 +38,17 @@ class Validator implements FibjsEnforce.IValidator {
         });
     }
 
-    ifType(type: string): FibjsEnforce.IValidator {
+    ifType(type: string): IValidator {
         return new Validator((value, next, contexts) => {
             if (typeof value != type) return next();
             return this.validator(value, next, contexts);
         });
     }
 
-    ifNotType(type: string): FibjsEnforce.IValidator {
+    ifNotType(type: string): IValidator {
         return new Validator((value, next, contexts) => {
             if (typeof value != type) return this.validator(value, next, contexts);
             return next();
         });
     }
 }
-
-export = Validator;

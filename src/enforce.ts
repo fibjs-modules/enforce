@@ -1,14 +1,26 @@
 ﻿/// <reference lib="es2017" />
-/// <reference path="../@types/index.d.ts" />
 
 import coroutine = require('coroutine');
-import Validator = require('./validator');
+import Validator, { IValidateContext } from './validator';
 
-class Enforce implements FibjsEnforce.IEnforce {
-    private validations: FibjsEnforce.ValidatorListDict = {};
-    private contexts: FibjsEnforce.ContextMap = {};
+import { IValidator } from './enforcements/common';
 
-    constructor(private options?: FibjsEnforce.Options) {
+export interface ValidationError extends Error {
+    property?: string;
+    value?: any;
+    msg?: string;
+    type?: string;
+}
+
+export default class Enforce {
+    private validations: {
+        [property: string]: IValidator[];
+    } = {};
+    private contexts: IValidateContext = {};
+
+    constructor(private options?: {
+        returnAllErrors: boolean;
+    }) {
         this.options = {
             returnAllErrors: options && !!options.returnAllErrors
         }
@@ -75,7 +87,7 @@ class Enforce implements FibjsEnforce.IEnforce {
                     data[property],
                     (message?: string) => {
                         if (message) {
-                            const err: FibjsEnforce.ValidationError = new Error(message);
+                            const err: ValidationError = new Error(message);
                             err.property = property;
                             err.value = data[property];
                             err.msg = message;
@@ -118,6 +130,3 @@ class Enforce implements FibjsEnforce.IEnforce {
         }
     }
 }
-
-
-export = Enforce;

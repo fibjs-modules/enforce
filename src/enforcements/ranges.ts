@@ -1,6 +1,7 @@
-﻿import Validator = require('../validator');
+﻿import Validator from '../validator';
+import { IValidator } from './common';
 
-export function number(min: number, max: number, message: string = 'out-of-range-number'): FibjsEnforce.IValidator {
+export function number(min: number, max: number, message: string = 'out-of-range-number'): IValidator {
     return new Validator((value: number, next) => {
         if (value === undefined || value === null) return next('undefined');
         if (min === undefined && value <= max) return next();
@@ -10,7 +11,7 @@ export function number(min: number, max: number, message: string = 'out-of-range
     });
 }
 
-export function length(min: number, max: number, message: string = 'out-of-range-length'): FibjsEnforce.IValidator {
+export function length(min: number, max: number, message: string = 'out-of-range-length'): IValidator {
     return new Validator((value: any[], next) => {
         if (value === undefined || value === null) return next('undefined');
         if (min === undefined && value.length <= max) return next();

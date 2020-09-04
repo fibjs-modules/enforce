@@ -1,9 +1,9 @@
 {
     "name": "@fibjs/enforce",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "description": "",
     "main": "lib/index.js",
-    "types": "@types/index.d.ts",
+    "types": "typings/index.d.ts",
     "repository": "git://github.com/fibjs-modules/enforce.git",
     "author": "richardo2016@gmail.com",
     "homepage": "https://github.com/fibjs-modules/enforce",
@@ -12,27 +12,23 @@
         "enforce"
     ],
     "scripts": {
-        "build": "fib-typify src -o lib",
+        "build": "ftsc src/* --outDir lib",
         "test": "fibjs test/run.js",
         "ci": "npm run build && npm run test",
         "prepublishOnly": "npm run build"
     },
     "devDependencies": {
         "@fibjs/ci": "^2.1.0",
-        "@types/fibjs": "^0.26.5",
-        "fib-typify": "^0.5.2"
+        "@fibjs/types": "^0.30.0",
+        "fib-typify": "^0.8.5"
     },
     "ci": {
         "type": "travis, appveyor",
         "version": [
-            "0.21.0",
-            "0.22.0",
-            "0.23.0",
-            "0.24.0",
-            "0.25.0",
-            "0.26.0",
-            "0.26.1",
-            "0.27.0"
+            "0.28.0",
+            "0.29.0",
+            "0.30.0",
+            "0.31.0"
         ]
     }
 }
