@@ -1,36 +1,48 @@
-﻿import { IValidator } from "./enforcements/common";
+﻿export type IValidateCtxUserData = Record<string | symbol | number, any>;
+type IValidateContext<TCTX extends IValidateCtxUserData = {}> = {
+    property: string;
+    u: TCTX;
+};
 
-export interface IValidateContext {
-    property?: string;
-    [name: string]: any;
+export interface IValidationProc<TCTX extends IValidateCtxUserData = {}> {
+    (
+        value: any,
+        next: (errorMessage?: string) => any,
+        contexts: IValidateContext<TCTX>
+    ): void;
 }
 
-export interface ValidationCallback {
-    (value: any, next: (errorMessage?: string) => any, thisArg?: any, contexts?: IValidateContext): void;
-}
+export default class Validator<TCTX extends IValidateCtxUserData = {}> {
+    private validator: IValidationProc<TCTX>;
+    private _thisArg: any = null;
 
-export default class Validator implements IValidator {
-    private validator: ValidationCallback;
-
-    constructor(validate: ValidationCallback) {
+    constructor (validate: IValidationProc<TCTX>) {
         this.validator = validate;
-        return this;
     }
     
-    public validate(data: any, next: (message?: string) => void, thisArg?: any, contexts?: IValidateContext) {
-        contexts = contexts || {};
-        this.validator.apply(thisArg, [data, next, contexts]);
+    validate(data: any, next: (message?: string) => void, contexts: TCTX = {} as TCTX) {
+        this.validator.apply(this._thisArg, [data, next, contexts]);
     }
 
-    ifDefined(): IValidator {
-        return new Validator((value, next, contexts) => {
+    setThisArg(thisArg: any) {
+        this._thisArg = thisArg;
+    }
+
+    /**
+     * @description enforce validating if data field defined.
+     */
+    ifDefined(): Validator<TCTX> {
+        return new Validator<TCTX>((value, next, contexts) => {
             if (value === undefined || value === null) return next();
             return this.validator(value, next, contexts);
         });
     }
     
-    ifNotEmptyString(): IValidator {
-        return new Validator((value, next, contexts) => {
+    /**
+     * @description enforce validating if data field not empty string.
+     */
+    ifNotEmptyString(): Validator<TCTX> {
+        return new Validator<TCTX>((value, next, contexts) => {
             if (value === undefined || value === null) return next();
             if (typeof value !== 'string') return next();
             if (value.length === 0) return next();
@@ -38,16 +50,23 @@ export default class Validator implements IValidator {
         });
     }
 
-    ifType(type: string): IValidator {
-        return new Validator((value, next, contexts) => {
-            if (typeof value != type) return next();
+    /**
+     * @description enforce validating if data field's type equals to `type`
+     */
+    ifType(type: string): Validator<TCTX> {
+        return new Validator<TCTX>((value, next, contexts) => {
+            if (typeof value != type)
+                return next();
+
             return this.validator(value, next, contexts);
         });
     }
 
-    ifNotType(type: string): IValidator {
-        return new Validator((value, next, contexts) => {
-            if (typeof value != type) return this.validator(value, next, contexts);
+    ifNotType(type: string): Validator<TCTX> {
+        return new Validator<TCTX>((value, next, contexts) => {
+            if (typeof value != type)
+                return this.validator(value, next, contexts);
+
             return next();
         });
     }

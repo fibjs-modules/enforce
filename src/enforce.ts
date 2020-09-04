@@ -1,9 +1,7 @@
 ﻿/// <reference lib="es2017" />
 
 import coroutine = require('coroutine');
-import Validator, { IValidateContext } from './validator';
-
-import { IValidator } from './enforcements/common';
+import Validator, { IValidateCtxUserData, IValidationProc } from './validator';
 
 export interface ValidationError extends Error {
     property?: string;
@@ -12,11 +10,26 @@ export interface ValidationError extends Error {
     type?: string;
 }
 
-export default class Enforce {
+function canBeyKey (key: any): key is (symbol | bigint | number | string) {
+    switch (typeof key) {
+        case 'symbol':
+        case 'number':
+        case 'string':
+        case 'bigint':
+            return true;
+        default:
+            break;
+    }
+
+    return false;
+}
+
+export default class Enforce<TENCTX extends IValidateCtxUserData = {}> {
     private validations: {
-        [property: string]: IValidator[];
+        [property: string]: Validator[];
     } = {};
-    private contexts: IValidateContext = {};
+    
+    private contexts: TENCTX = {} as TENCTX;
 
     constructor(private options?: {
         returnAllErrors: boolean;
@@ -26,28 +39,34 @@ export default class Enforce {
         }
     }
 
-    add(property: string, validator: any) {
-        if (typeof validator === 'function' && validator.length >= 2) {
-            validator = new Validator(validator);
-        }
+    add(property: string, _validator: IValidationProc<TENCTX> | Validator<TENCTX>) {
+        let validator: Validator<TENCTX>;
+        
+        // if validator is one IValidationProc<TENCTX>
+        if (typeof _validator === 'function' && _validator.length >= 2) {
+            validator = new Validator<TENCTX>(_validator);
+        } else
+            validator = _validator as Validator<TENCTX>;
 
-        if (validator.validate === undefined) {
-            throw new Error('[FibjsEnforce.add(property, validator)]Missing validate function validator');
-        }
+        if (validator.validate === undefined)
+            throw new Error('[Enforce.add(property, validator)] Missing validate function validator');
 
         if (!this.validations.hasOwnProperty(property) || !Array.isArray(this.validations[property]))
             this.validations[property] = [];
 
         this.validations[property].push(validator);
+
         return this;
     }
 
-    context(name?: string, value?: any) {
-        if (name && value) {
+    context(): TENCTX;
+    context(name: keyof TENCTX): TENCTX[keyof TENCTX];
+    context(name: keyof TENCTX, value: any): this;
+    context(name?: keyof TENCTX, value?: any) {
+        if (canBeyKey(name) && value !== undefined) {
             this.contexts[name] = value;
             return this;
-        }
-        else if (name)
+        } else if (canBeyKey(name))
             return this.contexts[name];
         else
             return this.contexts;
@@ -57,10 +76,10 @@ export default class Enforce {
         this.validations = {};
     }
 
-    checkSync (data: any): Error[] {
+    checkSync (data: any): ValidationError[] {
         const validation_entries = Object.entries(this.validations);
 
-        const errors: Error[] = [];
+        const errors: ValidationError[] = [];
 
         const { returnAllErrors } = this.options;
         const evts = [];
@@ -74,8 +93,10 @@ export default class Enforce {
             const [property, validationList] = validation_entries.shift();
             const _validationList = Array.from(validationList);
             
-            const contexts = {...this.contexts};
-            contexts.property = property;
+            const contexts = {
+                property,
+                u: { ...this.contexts },
+            };
 
             while (_validationList.length && noErrorsOrNeedAllErrors()) {
                 const _evt = new coroutine.Event();
@@ -83,6 +104,7 @@ export default class Enforce {
 
                 const validator = _validationList.shift();
 
+                validator.setThisArg(data);
                 validator.validate(
                     data[property],
                     (message?: string) => {
@@ -98,7 +120,6 @@ export default class Enforce {
 
                         _evt.set();
                     },
-                    data,
                     contexts
                 );
 
@@ -119,14 +140,13 @@ export default class Enforce {
         return errors;
     }
 
-    check(data: any, cb: (errors: any) => void): any {
+    check(data: any, cb: (errors: null | ValidationError | ValidationError[]) => void): void {
         const errors = this.checkSync(data);
         const { returnAllErrors } = this.options;
 
-        if (errors.length) {
+        if (errors.length)
             cb(!returnAllErrors ? errors[0] : errors)
-        } else {
+        else
             cb(null);
-        }
     }
 }

@@ -1,6 +1,5 @@
 ﻿import patterns = require('./patterns');
 import Validator from '../validator';
-import { IValidator } from './common';
 
 export interface SecurityUsernameOptions {
     length: number;
@@ -18,9 +17,9 @@ var creditcard_prefixes: {
         discover2: ["65"]
     };
 
-export function username(message?: string): IValidator;
-export function username(options: SecurityUsernameOptions, message?: string): IValidator;
-export function username(options: SecurityUsernameOptions = { length: 2, expr: null }, message: string = 'invalid-username'): IValidator {
+export function username(message?: string): Validator;
+export function username(options: SecurityUsernameOptions, message?: string): Validator;
+export function username(options: SecurityUsernameOptions = { length: 2, expr: null }, message: string = 'invalid-username') {
     if (typeof options === 'string') {
         message = (options as any).toString();
         options = { length: 2, expr: null };
@@ -33,9 +32,9 @@ export function username(options: SecurityUsernameOptions = { length: 2, expr: n
     return patterns.match(options.expr, message);
 }
 
-export function password(message?: string): IValidator;
-export function password(checks: string, message?: string): IValidator;
-export function password(checks?: string, message?: string): IValidator {
+export function password(message?: string): Validator;
+export function password(checks: string, message?: string): Validator;
+export function password(checks?: string, message?: string) {
     if (!message) {
         message = checks;
         checks = "luns6";
@@ -61,7 +60,7 @@ export function password(checks?: string, message?: string): IValidator {
     });
 }
 
-export function creditcard(types: string[]= ["amex", "visa", "maestro", "discover", "mastercard"], message: string = 'not-valid-creditcard'): IValidator {
+export function creditcard(types: string[]= ["amex", "visa", "maestro", "discover", "mastercard"], message: string = 'not-valid-creditcard') {
     return new Validator((v, next) => {
         if (!v) return next(message);
 

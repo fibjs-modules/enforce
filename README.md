@@ -56,6 +56,8 @@ checks.check({
 
 ## Validators
 
+In fact, all **enforcements** led to return one **Validator**, see detail of **Validator** [here](./src/enforcements/common.ts).
+
 All validators accept a `msg` argument at the end. These argument is the error message returned if the
 validation fails. All validators return a `Validator` object that is used by `Enforce` to support chaining
 and other functionality. `Validator` objects have a `validate` method which is called by `Enforce` with the 
