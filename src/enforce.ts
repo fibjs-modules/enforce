@@ -3,11 +3,12 @@
 import coroutine = require('coroutine');
 import Validator, { IValidateCtxUserData, IValidationProc } from './validator';
 
-export interface ValidationError extends Error {
-    property?: string;
-    value?: any;
+export interface ValidationError<TP extends string = string> extends Error {
+    type: 'validation';
     msg?: string;
-    type?: string;
+
+    _property?: TP;
+    _value?: any;
 }
 
 function canBeyKey (key: any): key is (symbol | bigint | number | string) {
@@ -24,10 +25,8 @@ function canBeyKey (key: any): key is (symbol | bigint | number | string) {
     return false;
 }
 
-export default class Enforce<TENCTX extends IValidateCtxUserData = {}> {
-    private validations: {
-        [property: string]: Validator[];
-    } = {};
+export default class Enforce<TPROP extends string = string, TENCTX extends IValidateCtxUserData = {}> {
+    private validations = {} as Record<TPROP, Validator[]>;
     
     private contexts: TENCTX = {} as TENCTX;
 
@@ -39,14 +38,12 @@ export default class Enforce<TENCTX extends IValidateCtxUserData = {}> {
         }
     }
 
-    add(property: string, _validator: IValidationProc<TENCTX> | Validator<TENCTX>) {
-        let validator: Validator<TENCTX>;
+    add(property: TPROP, _validator: IValidationProc<TENCTX> | Validator<TENCTX>) {
+        let validator = _validator as Validator<TENCTX>;
         
         // if validator is one IValidationProc<TENCTX>
-        if (typeof _validator === 'function' && _validator.length >= 2) {
+        if (typeof _validator === 'function' && _validator.length >= 2)
             validator = new Validator<TENCTX>(_validator);
-        } else
-            validator = _validator as Validator<TENCTX>;
 
         if (validator.validate === undefined)
             throw new Error('[Enforce.add(property, validator)] Missing validate function validator');
@@ -73,11 +70,11 @@ export default class Enforce<TENCTX extends IValidateCtxUserData = {}> {
     }
 
     clear() {
-        this.validations = {};
+        this.validations = {} as Record<TPROP, Validator[]>;
     }
 
-    checkSync (data: any): ValidationError[] {
-        const validation_entries = Object.entries(this.validations);
+    checkSync<TD extends Record<string, any> = {}> (data: TD): ValidationError[] {
+        const validation_entries: [string, Validator[]][] = Object.entries(this.validations);
 
         const errors: ValidationError[] = [];
 
@@ -95,6 +92,7 @@ export default class Enforce<TENCTX extends IValidateCtxUserData = {}> {
             
             const contexts = {
                 property,
+                data,
                 u: { ...this.contexts },
             };
 
@@ -104,16 +102,18 @@ export default class Enforce<TENCTX extends IValidateCtxUserData = {}> {
 
                 const validator = _validationList.shift();
 
-                validator.setThisArg(data);
+                validator._setThisArg(data);
                 validator.validate(
                     data[property],
                     (message?: string) => {
                         if (message) {
-                            const err: ValidationError = new Error(message);
-                            err.property = property;
-                            err.value = data[property];
+                            const err = new Error(message) as ValidationError;
                             err.msg = message;
                             err.type = "validation";
+                            
+                            err._property = property;
+                            err._value = data[property];
+
 
                             errors.push(err);
                         }

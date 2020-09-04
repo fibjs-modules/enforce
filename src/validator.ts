@@ -1,6 +1,8 @@
 ﻿export type IValidateCtxUserData = Record<string | symbol | number, any>;
 type IValidateContext<TCTX extends IValidateCtxUserData = {}> = {
     property: string;
+    // data to be validated
+    data: object
     u: TCTX;
 };
 
@@ -14,7 +16,7 @@ export interface IValidationProc<TCTX extends IValidateCtxUserData = {}> {
 
 export default class Validator<TCTX extends IValidateCtxUserData = {}> {
     private validator: IValidationProc<TCTX>;
-    private _thisArg: any = null;
+    private _thisArg: object = {};
 
     constructor (validate: IValidationProc<TCTX>) {
         this.validator = validate;
@@ -24,7 +26,7 @@ export default class Validator<TCTX extends IValidateCtxUserData = {}> {
         this.validator.apply(this._thisArg, [data, next, contexts]);
     }
 
-    setThisArg(thisArg: any) {
+    _setThisArg(thisArg: object) {
         this._thisArg = thisArg;
     }
 
