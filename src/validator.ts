@@ -1,4 +1,6 @@
-﻿export type IValidateCtxUserData = Record<string | symbol | number, any>;
+﻿import util = require('util');
+
+export type IValidateCtxUserData = Record<string | symbol | number, any>;
 type IValidateContext<TCTX extends IValidateCtxUserData = {}> = {
     property: string;
     // data to be validated
@@ -24,6 +26,16 @@ export default class Validator<TCTX extends IValidateCtxUserData = {}> {
     
     validate(data: any, next: (message?: string) => void, contexts: TCTX = {} as TCTX) {
         this.validator.apply(this._thisArg, [data, next, contexts]);
+    }
+
+    validateSync(data: any, contexts: TCTX = {} as TCTX): string | void {
+        const wrapper = (data: any, contexts: TCTX = {} as TCTX, cb: Function) => {
+            this.validate(data, (message?: string) => {
+                cb(null, message);
+            }, contexts);
+        };
+
+        return util.sync(wrapper)(data, contexts);
     }
 
     _setThisArg(thisArg: object) {

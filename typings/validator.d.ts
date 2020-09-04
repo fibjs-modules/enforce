@@ -1,7 +1,7 @@
 export declare type IValidateCtxUserData = Record<string | symbol | number, any>;
 declare type IValidateContext<TCTX extends IValidateCtxUserData = {}> = {
     property: string;
-    data: any;
+    data: object;
     u: TCTX;
 };
 export interface IValidationProc<TCTX extends IValidateCtxUserData = {}> {
@@ -12,7 +12,8 @@ export default class Validator<TCTX extends IValidateCtxUserData = {}> {
     private _thisArg;
     constructor(validate: IValidationProc<TCTX>);
     validate(data: any, next: (message?: string) => void, contexts?: TCTX): void;
-    _setThisArg(thisArg: any): void;
+    validateSync(data: any, contexts?: TCTX): string | void;
+    _setThisArg(thisArg: object): void;
     /**
      * @description enforce validating if data field defined.
      */
